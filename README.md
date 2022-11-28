@@ -22,7 +22,14 @@ This bot is still in improvement; [join the server](https://discord.gg/gjRfPR8Rc
 4. If you have the bot token copied, paste it in the `main.py` file where `TOKEN = 'TOKEN'`. **DO NOT SHARE THIS TOKEN WITH ANYONE**
 
 5. Create database in postgreSQL, note the database name, username, and password
-6. Paste it in the `main.py` file where `DB_NAME = "name"`. `DB_USERNAME = "username"`, `DB_PASSWORD = "password"` respectively
+6. Create a text file called `secrets.txt` with the following format:
+```
+TOKEN: token
+database name: db_name
+database username: db_uname
+database password: db_password
+```
+6. Save it in the root directory (same level as `main.py`)
 
 7. Go back to the developer site, go to **OAuth2 / URL Generator** tab, enable scopes `bot` and `application.commands`
 8. Enable whatever permissions you want (I recommend `Administrator` for proper functioning).
