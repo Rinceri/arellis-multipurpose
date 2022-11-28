@@ -548,7 +548,10 @@ Leave the message parameter empty (and don't reply to a message) to execute with
             deleted = await ctx.channel.purge(limit = counter, bulk = True, after = discord.utils.utcnow() - timedelta(days = 14), oldest_first = False,
             reason = f"Action by {ctx.author} (ID :{ctx.author.id})")
             
-            await ctx.send(f"Purged {len(deleted)} message{is_s(len(deleted))}", ephemeral = True, delete_after = 5)
+            try:
+                await ctx.send(f"Purged {len(deleted)} message{is_s(len(deleted))}", ephemeral = True, delete_after = 5)
+            except discord.errors.NotFound:
+                pass
 
             return
         
@@ -574,8 +577,10 @@ Leave the message parameter empty (and don't reply to a message) to execute with
             after = discord.utils.utcnow() - timedelta(days = 14), oldest_first = False, check = check,
             reason = f"Action by {ctx.author} (ID :{ctx.author.id})")
 
-
-            await ctx.send(f"Purged {len(deleted)} message{is_s(len(deleted))}", ephemeral = True, delete_after = 5)
+            try:
+                await ctx.send(f"Purged {len(deleted)} message{is_s(len(deleted))}", ephemeral = True, delete_after = 5)
+            except discord.errors.NotFound:
+                pass
 
     @commands.cooldown(rate = 1, per = 10, type = BucketType.member)
     @commands.has_guild_permissions(moderate_members = True)
