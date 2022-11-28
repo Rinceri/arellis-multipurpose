@@ -531,8 +531,9 @@ class MUtility(commands.Cog, name = "moderator utility", description = "Utility 
 Leave the message parameter empty (and don't reply to a message) to execute with those parameters.", ephemeral = True, delete_after = 5)
 
             return
-        
-        s = 's' if number > 1 else ''
+
+        def is_s(num):
+            return 's' if num > 1 else ''
 
 
         if number > 500 or number <= 0:
@@ -542,7 +543,7 @@ Leave the message parameter empty (and don't reply to a message) to execute with
             deleted = await ctx.channel.purge(limit = number, bulk = True, after = discord.utils.utcnow() - timedelta(days = 14), oldest_first = False,
             reason = f"Action by {ctx.author} (ID :{ctx.author.id})")
             
-            await ctx.send(f"Purged {len(deleted)} message{s}", ephemeral = True, delete_after = 5)
+            await ctx.send(f"Purged {len(deleted)} message{is_s(len(deleted))}", ephemeral = True, delete_after = 5)
 
             return
         
@@ -558,12 +559,13 @@ Leave the message parameter empty (and don't reply to a message) to execute with
                         return True
                 else:
                     return False
-            
+    
             deleted = await ctx.channel.purge(limit = 100 if number <= 100 else 750, bulk = True,
             after = discord.utils.utcnow() - timedelta(days = 14), oldest_first = False, check = check,
             reason = f"Action by {ctx.author} (ID :{ctx.author.id})")
 
-            await ctx.send(f"Purged {len(deleted)} message{s}", ephemeral = True, delete_after = 5)
+
+            await ctx.send(f"Purged {len(deleted)} message{is_s(len(deleted))}", ephemeral = True, delete_after = 5)
 
     @commands.cooldown(rate = 1, per = 10, type = BucketType.member)
     @commands.has_guild_permissions(moderate_members = True)
