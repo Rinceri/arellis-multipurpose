@@ -336,11 +336,14 @@ class MUtility(commands.Cog, name = "moderator utility", description = "Utility 
     @app_commands.describe(channel_type = "Type of channel, can be either 'text', 'voice', 'stage', or 'forum'",
     hidden = "If the channel should be hidden from everyone",
     name = "Name of the channel")
-    async def c_create(self, ctx: commands.Context, channel_type: Optional[Literal['Text', 'Voice', 'Stage', 'Forum']], hidden: Optional[bool], *,
+    async def c_create(self, ctx: commands.Context, channel_type: Optional[Literal['text', 'voice', 'stage', 'forum']], hidden: Optional[bool], *,
     name: str = "new-channel"):
         
         if channel_type is None:
-            channel_type = 'Text'
+            channel_type = 'text'
+
+        if channel_type == 'stage' or channel_type == 'forum' and 'COMMUNITY' not in ctx.guild.features:
+            return await ctx.send("Making this channel type requires Community mode to be enabled", ephemeral = True, delete_after = 10)
 
         if hidden is None:
             hidden = False
@@ -351,7 +354,6 @@ class MUtility(commands.Cog, name = "moderator utility", description = "Utility 
         TEXT_OVERWRITES = {ctx.guild.default_role: discord.PermissionOverwrite(read_messages=False), 
         ctx.guild.me: discord.PermissionOverwrite(read_messages=True)}
 
-        channel_type = channel_type.lower()
         if channel_type == 'text':
             name = ''.join([letter for letter in name.replace(' ','-') if letter == '-' or letter.isalnum()])
             if not hidden:
