@@ -52,7 +52,7 @@ class CommandErrorHandler(commands.Cog, command_attrs = dict(hidden = True)):
         elif isinstance(error, commands.MissingPermissions) or isinstance(error, commands.BotMissingPermissions):
             await ctx.send("You do not have permissions to run this command.", ephemeral = True, delete_after = 5)
         
-        elif isinstance(error,commands.CheckFailure) or isinstance(error, discord.app_commands.errors.CommandInvokeError):
+        elif isinstance(error,commands.CheckFailure):
             pass
 
         else:

@@ -58,7 +58,7 @@ class Setup(commands.Cog, name = "setup"):
             
             await self.bot.pool.execute("UPDATE guild_table SET blacklisted_channels = $1 WHERE guild_id = $2", b_c, ctx.guild.id)
 
-        desc_list = [ctx.guild.get_channel(c).mention for c in b_c] if len(b_c) > 0 else ['None']
+        desc_list = [ctx.guild.get_channel(c).mention for c in b_c] if b_c is not None and len(b_c) > 0 else ['None']
         em = discord.Embed(color = EMBED_COLOR, title = "Blacklisted channels", description = '\n'.join(desc_list))
 
         await ctx.send(embed = em)
