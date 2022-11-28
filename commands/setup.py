@@ -45,7 +45,8 @@ class Setup(commands.Cog, name = "setup"):
     @commands.cooldown(rate = 1, per = 10, type = BucketType.member)
     @commands.hybrid_command(description = "Blacklist/whitelist channels from using commands.")
     async def blacklist(self, ctx: commands.Context, channels: commands.Greedy[discord.TextChannel] = None):
-        b_c: list = await self.bot.pool.fetchval("SELECT blacklisted_channels FROM guild_table WHERE guild_id = $1", ctx.guild.id)
+        b_c = await self.bot.pool.fetchval("SELECT blacklisted_channels FROM guild_table WHERE guild_id = $1", ctx.guild.id)
+        b_c = b_c if b_c is not None else []
 
         if channels is not None:
             for channel in channels:
@@ -58,7 +59,7 @@ class Setup(commands.Cog, name = "setup"):
             
             await self.bot.pool.execute("UPDATE guild_table SET blacklisted_channels = $1 WHERE guild_id = $2", b_c, ctx.guild.id)
 
-        desc_list = [ctx.guild.get_channel(c).mention for c in b_c] if b_c is not None and len(b_c) > 0 else ['None']
+        desc_list = [ctx.guild.get_channel(c).mention for c in b_c] if len(b_c) > 0 else ['None']
         em = discord.Embed(color = EMBED_COLOR, title = "Blacklisted channels", description = '\n'.join(desc_list))
 
         await ctx.send(embed = em)

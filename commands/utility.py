@@ -372,12 +372,12 @@ class MUtility(commands.Cog, name = "moderator utility", description = "Utility 
                                 
         elif channel_type == 'stage':
             if not hidden:
-                await ctx.guild.create_stage_channel(name = name, category = ctx.channel.category,
-                reason = f"Created by {str(ctx.author)} (ID: {ctx.author.id})")
+                channel = await ctx.guild.create_stage_channel(name = name, category = ctx.channel.category,
+                reason = f"Created by {str(ctx.author)} (ID: {ctx.author.id})", topic = "None")
             
             else:
                 channel = await ctx.guild.create_stage_channel(name = name, category = ctx.channel.category,
-                reason = f"Created by {str(ctx.author)} (ID: {ctx.author.id})", overwrites = VOICE_OVERWRITES)
+                reason = f"Created by {str(ctx.author)} (ID: {ctx.author.id})", overwrites = VOICE_OVERWRITES, topic = "None")
                 
         elif channel_type == 'forum':
             name = ''.join([letter for letter in name.replace(' ','-') if letter == '-' or letter.isalnum()])
