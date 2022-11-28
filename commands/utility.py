@@ -540,6 +540,8 @@ Leave the message parameter empty (and don't reply to a message) to execute with
             return await ctx.send("Invalid number. Keep it under 500 and above 0", ephemeral = True, delete_after = 5)
 
         if member is None:
+            if number > ctx.channel.message_count:
+                number = ctx.channel.message_count
             deleted = await ctx.channel.purge(limit = number, bulk = True, after = discord.utils.utcnow() - timedelta(days = 14), oldest_first = False,
             reason = f"Action by {ctx.author} (ID :{ctx.author.id})")
             
@@ -559,8 +561,11 @@ Leave the message parameter empty (and don't reply to a message) to execute with
                         return True
                 else:
                     return False
-    
-            deleted = await ctx.channel.purge(limit = 100 if number <= 100 else 750, bulk = True,
+        
+            limit = 100 if number <= 100 else 750
+            if limit > ctx.channel.message_count:
+                limit = ctx.channel.message_count
+            deleted = await ctx.channel.purge(limit = limit, bulk = True,
             after = discord.utils.utcnow() - timedelta(days = 14), oldest_first = False, check = check,
             reason = f"Action by {ctx.author} (ID :{ctx.author.id})")
 

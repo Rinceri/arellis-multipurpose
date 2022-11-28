@@ -120,12 +120,13 @@ class Tags(commands.Cog, name = "tags", description = "Tags return specified tex
             return await ctx.send("Tag alias is too long. Keep it under 255 characters", ephemeral = True, delete_after = 5)
 
         record = await conn.fetchrow("SELECT * FROM tags WHERE tag_name = $1 and guild_id = $2", name, ctx.guild.id)
-        server_aliases = await conn.fetch("SELECT aliases FROM tags WHERE guild_id = $1", ctx.guild.id)
+        server_aliases = await conn.fetch("SELECT tag_name, aliases FROM tags WHERE guild_id = $1", ctx.guild.id)
         
         if record is None:
             return await ctx.send("Tag with this name does not exist", ephemeral = True, delete_after = 5)
 
-        if alias in [alias for server_tag in server_aliases for alias in server_tag['aliases']]:
+        if alias in [alias for server_tag in server_aliases for alias in server_tag['aliases']] or\
+            alias in [tag_name['tag_name'] for tag_name in server_aliases]:
             return await ctx.send("Alias already exists for a tag.", ephemeral = True, delete_after = 5)
 
         aliases = record['aliases']
