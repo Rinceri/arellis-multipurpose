@@ -42,7 +42,7 @@ class CommandErrorHandler(commands.Cog, command_attrs = dict(hidden = True)):
         if isinstance(error,commands.MissingRequiredArgument):
             await ctx.send(f"You have not typed the required arguments!\nView `help {ctx.command.name}` to learn more.", delete_after = 5, ephemeral = True)
         
-        elif isinstance(error,commands.BadArgument):
+        elif isinstance(error,commands.BadArgument) or isinstance(error, discord.app_commands.errors.TransformerError):
             await ctx.send(f"You have not typed the arguments correctly!\nView `help {ctx.command.name}` to learn more.", delete_after = 5, ephemeral = True)
         
         elif isinstance(error,commands.CommandOnCooldown):
