@@ -16,7 +16,7 @@ class Tags(commands.Cog, name = "tags", description = "Tags return specified tex
     async def cog_check(self, ctx: commands.Context) -> bool:
         b_c = await self.bot.pool.fetchval("SELECT blacklisted_channels FROM guild_table WHERE guild_id = $1", ctx.guild.id)
 
-        if ctx.channel.id in b_c:
+        if b_c is not None and ctx.channel.id in b_c:
             return False
         return True
 
@@ -226,7 +226,7 @@ class PUtility(commands.Cog, name = "public utility"):
     async def cog_check(self, ctx: commands.Context) -> bool:
         b_c = await self.bot.pool.fetchval("SELECT blacklisted_channels FROM guild_table WHERE guild_id = $1", ctx.guild.id)
 
-        if ctx.channel.id in b_c:
+        if b_c is not None and ctx.channel.id in b_c:
             return False
         return True
 
