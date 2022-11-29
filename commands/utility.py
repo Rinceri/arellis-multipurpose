@@ -227,6 +227,7 @@ class MUtility(commands.Cog, name = "moderator utility", description = "Utility 
 
         elif name is None and color is None:
             await ctx.send("Atleast one parameter except `role` must be filled.", ephemeral = True, delete_after = 5)
+            return
 
         await ctx.send("Role has been edited")
     
