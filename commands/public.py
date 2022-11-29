@@ -3,6 +3,7 @@ from discord.ext import commands
 from discord.ext.commands.cooldowns import BucketType
 from asyncpg import Connection
 from typing import Optional
+from random import choice
 
 EMBED_COLOR = discord.Color.from_str("#ddb857")
 SERVER_LINK = "https://discord.gg/gjRfPR8Rcm"
@@ -234,7 +235,8 @@ class PUtility(commands.Cog, name = "public utility"):
     @commands.cooldown(rate = 1, per = 5, type = BucketType.user)
     @commands.command(hidden = True, description = "bottle is best fr") # this just a hidden command for fun lol
     async def bottle(self, ctx: commands.Context):
-        await ctx.send("unnamed#1680 likes women")
+        lis = ['misterlustre#3885 got five comically long metal spoons down his throat', 'unnamed#1680 likes women', 'i hate nestle']
+        await ctx.send(choice(lis))
 
     @commands.cooldown(rate = 1, per = 5, type = BucketType.member)
     @commands.hybrid_command(description = "Gives the attachemnt link(s) in replied message or message passed in (either through ID or link)")
