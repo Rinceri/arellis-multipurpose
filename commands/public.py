@@ -6,7 +6,7 @@ from typing import Optional
 
 EMBED_COLOR = discord.Color.from_str("#ddb857")
 SERVER_LINK = "https://discord.gg/gjRfPR8Rcm"
-GITHUB_LINK = "https://github.com/Rinceri/arellis-bot"
+GITHUB_LINK = "https://github.com/Rinceri/arellis-multipurpose"
 
 
 class Tags(commands.Cog, name = "tags", description = "Tags return specified text when they are called"):
