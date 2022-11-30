@@ -5,6 +5,7 @@ from discord import app_commands
 from typing import Optional, Literal
 from datetime import timedelta
 from helper import poll_views
+from helper.other import Paginator
 from helper.other import ColorParser
 import aiohttp
 
@@ -456,24 +457,33 @@ class MUtility(commands.Cog, name = "moderator utility", description = "Utility 
         value = ""
         em.add_field(name = "_ _", value = "_ _", inline = False)
         field_id = 0
+        chars = 0
 
         for num, emote in enumerate(ctx.guild.emojis):
             if len(value) > 900:
                 em.set_field_at(field_id, name = "_ _", value = value, inline = False)
 
-                if field_id == 24:
+                if field_id == 24 or chars > 5600:
                     em = discord.Embed(color = EMBED_COLOR)
                     em_list.append(em)
                     field_id = 0
-                
+                    chars = 0
+                else:
+                    field_id += 1
+
                 value = ""
                 em.add_field(name = "_ _", value = "_ _", inline = False)
-                field_id += 1
 
             value += f"{emote} [`[{num+1}]`]({emote.url}) "
+            chars += len(value)
             
         em.set_field_at(field_id, name = "_ _", value = value, inline = False)
-        await ctx.send(embed = em)
+        
+        if len(em_list) == 1:
+            await ctx.send(embed = em)
+        else:
+            view = Paginator(ctx.author, em_list)
+            view.msg = await ctx.send(embed = em_list[0], view = view)
             
     @commands.cooldown(rate = 1, per = 10, type = BucketType.member)
     @commands.has_guild_permissions(manage_nicknames = True)

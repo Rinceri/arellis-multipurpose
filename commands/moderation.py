@@ -279,7 +279,7 @@ class Moderation(commands.Cog, name = "moderation"):
         
         # DM
         dm_em = discord.Embed(color = EMBED_COLOR, title = f"Moderator Action: you have been warned",
-        description = f"You have been warned (`{points}` points) in **{ctx.guild.name}**.\n**Reason:** {reason}")
+        description = f"You have been warned (`{points}` point{'s' if points > 1 else ''}) in **{ctx.guild.name}**.\n**Reason:** {reason}")
 
         additional_message = await self.bot.pool.fetchval("SELECT offence_message FROM guild_table WHERE guild_id = $1", ctx.guild.id)
 
@@ -297,7 +297,7 @@ class Moderation(commands.Cog, name = "moderation"):
 
         # making embed        
         warn_em = discord.Embed(color = EMBED_COLOR, title = f"Moderator Action: ` Warn `",
-        description = f"User **`{member} (ID: {member.id})`** has been warned (`{points}` points).\n**Reason:** {reason}")
+        description = f"User **`{member} (ID: {member.id})`** has been warned (`{points}` point{'s' if points > 1 else ''}).\n**Reason:** {reason}")
         
         warn_em.set_author(name = str(ctx.author), icon_url = ctx.author.display_avatar.url)
 
@@ -525,21 +525,25 @@ class Moderation(commands.Cog, name = "moderation"):
         
         em_list = [em]
         field_id = 0
+        chars = 0
 
         for rec in offences:
-            if field_id == 24:
+            if field_id == 24 or chars > 5000:
                 em = discord.Embed(color = EMBED_COLOR, title = f"Action logs for `{str(member).replace('`','')}`",
                 description = f"Actions on this user: `{actions}`")
                 em_list.append(em)
                 field_id = 0
-
-            punishment = rec['punishment']
+                chars = 0
+            else:
+                field_id += 1
             mod = await self.bot.fetch_user(rec['created_by'])
             created_on = discord.utils.format_dt(rec['created_on'], 'F')
 
-            em.add_field(name = f"Action: `{punishment}`",
-            value = f"**Moderator:** {mod.mention}\n**Action on:** {created_on}\n**Reason:** {rec['body'][:900]}")
-            field_id += 1
+            name = f"Action: `{rec['punishment']}`"
+            value = f"**Moderator:** {mod.mention}\n**Action on:** {created_on}\n**Reason:** {rec['body'][:900]}"
+
+            em.add_field(name = name, value = value)
+            chars += len(name) + len(value)
 
         if len(em_list) == 1:
             await ctx.send(embed = em)

@@ -138,6 +138,7 @@ class WarnView(discord.ui.View):
 
     async def interaction_check(self, itx:discord.Interaction, /) -> bool:
         if itx.user == self.author:
+            self.msg = itx.message
             return True
         await itx.response.send_message("You are not authorized for this interaction.", ephemeral = True)
         return False
@@ -152,9 +153,9 @@ class WarnView(discord.ui.View):
         thresholds = await self.bot.pool.fetch("SELECT * FROM autopunishments WHERE guild_id=$1",itx.guild.id)
         if len(thresholds)>=10:
             return await itx.response.send_message("You can only have 10 thresholds maximum.",ephemeral=True)
-        
         await itx.response.send_modal(AddThreshold(self.bot.pool,self.msg,self.field_0,self.field_1))
-    
+
+
     @discord.ui.button(label="Remove threshold",style=discord.ButtonStyle.blurple,row=0)
     async def removet(self,itx:discord.Interaction,button:discord.ui.Button):
         if await self.bot.pool.fetchval("SELECT EXISTS (SELECT 1 FROM autopunishments WHERE guild_id=$1)",itx.guild.id):

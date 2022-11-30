@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 class Paginator(discord.ui.View):
     def __init__(self, author: discord.User, list_of_embeds: List[discord.Embed]):
-        super().__init__(timeout = 180)
+        super().__init__(timeout = 60)
         self.list_of_embeds = list_of_embeds
         self.author = author
         self.page_number = 1
@@ -22,6 +22,7 @@ class Paginator(discord.ui.View):
         await self.msg.edit(view = self)
 
     async def interaction_check(self, itx: discord.Interaction) -> bool:
+        self.msg = itx.message
         if itx.user == self.author:
             return True
         await itx.response.send_message("You are not authorized for this interaction.", ephemeral = True)
@@ -99,7 +100,7 @@ class Paginator(discord.ui.View):
         
         button.disabled = True
 
-        await self.msg.edit(embed = self.list_of_embeds[0], view = self)
+        await self.msg.edit(embed = self.list_of_embeds[self.page_number - 1], view = self)
         await itx.response.send_message(f"You are on page {self.page_number}", ephemeral = True, delete_after = 1)
 
 EMBED_COLOR = discord.Color.from_str("#9fca77")
