@@ -207,9 +207,8 @@ class AddThreshold(discord.ui.Modal):
         self.field_1 = field_1
 
         self.threshold_points = discord.ui.TextInput(label="Points for threshold",placeholder="The number of points to reach this threshold",max_length=3)
-        self.threshold_ptype = discord.ui.TextInput(label="Punishment Type",placeholder="'Ban' for ban. 'Kick' for kick. 'Timeout' for timeout. \
-'Mute' for mute with role.")
-        self.threshold_timer = discord.ui.TextInput(label="Timer (Ignore if permanent ban/mute.)",
+        self.threshold_ptype = discord.ui.TextInput(label="Punishment Type",placeholder="'Ban' for ban. 'Kick' for kick. 'Timeout' or 'Mute' for timeout")
+        self.threshold_timer = discord.ui.TextInput(label="Timer (Ignore if permanent ban/kick)",
         placeholder="'o' for months, 'w' for weeks, 'd' for days, 'h' for hours, 'm' for minutes. Example: '2o  12h 5m'",
         required=False)
         
@@ -238,7 +237,7 @@ class AddThreshold(discord.ui.Modal):
         except:
             timer = timedelta(days = 0)
 
-        if self.threshold_ptype.value.lower() == "timeout" and (timer.days >= 27 or (timer.days==0 and timer.seconds==0)):
+        if self.threshold_ptype.value.lower() in ['mute',"timeout"]  and (timer.days >= 27 or (timer.days==0 and timer.seconds==0)):
             timer = timedelta(days=28)
 
         if (timer.days==0 and timer.seconds==0) or self.threshold_ptype.value.lower() == 'kick':
@@ -249,8 +248,8 @@ class AddThreshold(discord.ui.Modal):
             if ban_points[0] < tpoints or (self.threshold_ptype.value.lower()=='ban' and timer is None):
                 return await itx.response.send_message("Permanent ban already exists.",ephemeral=True)
     
-        info_dictt = {"timeout":"mute","ban":"bant","mute":"banmt"}
-        info_dict = {"kick":"kick","ban":"ban","mute":"banm"}
+        info_dictt = {"timeout":"mute","ban":"bant","mute":"mute"}
+        info_dict = {"kick":"kick","ban":"ban"}
         p_type = info_dictt[self.threshold_ptype.value.lower()] if timer is not None else info_dict[self.threshold_ptype.value.lower()]
 
         await self.pool.execute("INSERT INTO autopunishments (guild_id,points,p_type,timer) VALUES($1,$2,$3,$4)",itx.guild.id,tpoints,p_type,timer)
