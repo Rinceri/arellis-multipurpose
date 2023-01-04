@@ -1,4 +1,5 @@
 # **Arellis bot**
+![arellis only](https://user-images.githubusercontent.com/105272951/210510607-4a07dc8a-d4ef-4058-b0da-4b0d709ef2cc.png)
 
 ### A multipurpose discord bot
 
