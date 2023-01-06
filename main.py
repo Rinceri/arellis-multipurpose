@@ -7,6 +7,8 @@ with open('secrets.txt', 'r') as f:
     lines = f.readlines()
     f.close()
 
+print("test")
+
 TOKEN = lines[0][7:].replace('\n','')
 DB_NAME = lines[1][15:].replace('\n','')
 DB_USERNAME = lines[2][19:].replace('\n','')
