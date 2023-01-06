@@ -24,12 +24,12 @@ This bot is still in improvement; [join the server](https://discord.gg/gjRfPR8Rc
 4. If you have the bot token copied, paste it in the `main.py` file where `TOKEN = 'TOKEN'`. **DO NOT SHARE THIS TOKEN WITH ANYONE**
 
 5. Create database in postgreSQL, note the database name, username, and password
-6. Create a text file called `secrets.txt` with the following format:
+6. Create a env file called `.env` with the following format:
 ```
-TOKEN: token
-database name: db_name
-database username: db_uname
-database password: db_password
+TOKEN = your_token_here
+DB_NAME = database_name
+DB_USERNAME = db_username
+DB_PASSWORD = db_password
 ```
 6. Save it in the root directory (same level as `main.py`)
 
