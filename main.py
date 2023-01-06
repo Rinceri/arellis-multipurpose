@@ -2,15 +2,15 @@ import discord
 from discord.ext import commands
 import asyncpg
 from helper import poll_views, join_view
+from os import getenv
+from dotenv import load_dotenv
 
-with open('secrets.txt', 'r') as f:
-    lines = f.readlines()
-    f.close()
+load_dotenv()
 
-TOKEN = lines[0][7:].replace('\n','')
-DB_NAME = lines[1][15:].replace('\n','')
-DB_USERNAME = lines[2][19:].replace('\n','')
-DB_PASSWORD = lines[3][19:].replace('\n','')
+TOKEN = getenv("TOKEN")
+DB_NAME = getenv("DB_NAME")
+DB_USERNAME = getenv("DB_USERNAME")
+DB_PASSWORD = getenv("DB_PASSWORD")
 
 class MyBot(commands.Bot):
     async def setup_hook(self) -> None:
