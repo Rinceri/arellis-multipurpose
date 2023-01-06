@@ -6,7 +6,7 @@ from os import getenv
 from dotenv import load_dotenv
 
 load_dotenv()
-"test"
+
 TOKEN = getenv("TOKEN")
 DB_NAME = getenv("DB_NAME")
 DB_USERNAME = getenv("DB_USERNAME")
