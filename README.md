@@ -16,7 +16,7 @@ This bot is still in improvement; [join the server](https://discord.gg/gjRfPR8Rc
 - Python 3.8 or higher
 - asyncpg (and consequently postgreSQL)
 - python-dotenv
-"test"
+
 ### Steps:
 1. Go to [Discord developers](https://discord.com/developers/applications) site, and create a new application
 2. Go to **Bot** tab and **Add bot**
