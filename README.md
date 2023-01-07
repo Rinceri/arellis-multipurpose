@@ -41,3 +41,6 @@ DB_PASSWORD = db_password
 11. Run the commands `-dbsetup` and then `-register` to setup database.
 
 And we're done!
+
+## Credits
+Thanks to zezo3021#6852 — bug tester
