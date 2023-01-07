@@ -20,10 +20,14 @@ class AdditionalMessage(discord.ui.View):
     async def on_timeout(self) -> None:
         for child in self.children:
             child.disabled = True
-        await self.msg.edit(view = self)
+        try:
+            await self.msg.edit(view = self)
+        except:
+            pass
 
     async def interaction_check(self, itx: discord.Interaction, /) -> bool:
         if self.author == itx.user:
+            self.msg = itx.message
             return True
         await itx.response.send_message("You are not authorized for this interaction.", ephemeral = True)
         return False
@@ -71,10 +75,14 @@ class VerificationView(discord.ui.View):
     async def on_timeout(self) -> None:
         for child in self.children:
             child.disabled = True
-        await self.msg.edit(view = self)
+        try:
+            await self.msg.edit(view = self)
+        except:
+            pass
 
     async def interaction_check(self, itx: discord.Interaction, /) -> bool:
         if self.author == itx.user:
+            self.msg = itx.message
             return True
         await itx.response.send_message("You are not authorized for this interaction.", ephemeral = True)
         return False
@@ -146,7 +154,10 @@ class WarnView(discord.ui.View):
     async def on_timeout(self):
         for child in self.children:
             child.disabled = True
-        await self.msg.edit(view = self)
+        try:
+            await self.msg.edit(view = self)
+        except:
+            pass
 
     @discord.ui.button(label="Add threshold",style=discord.ButtonStyle.blurple,row=0)
     async def addt(self,itx:discord.Interaction,button:discord.ui.Button):
@@ -161,15 +172,22 @@ class WarnView(discord.ui.View):
         if await self.bot.pool.fetchval("SELECT EXISTS (SELECT 1 FROM autopunishments WHERE guild_id=$1)",itx.guild.id):
             options = [discord.SelectOption(label=x['points'],value=x['id']) for x in await self.bot.pool.fetch("SELECT id,points FROM autopunishments\
                 WHERE guild_id=$1",itx.guild.id)]
-            view = RemoveThreshold(self.author,self.bot.pool,self.msg,options,self.field_0,self.field_1)
+            
+            view = RemoveThreshold(self.author, self.bot.pool, self.msg,options, self.field_0, self.field_1)
+            
             await itx.response.send_message("Press **Submit** to submit.",view=view)
             button.disabled = True
             await self.msg.edit(view=self)
             await view.wait()
+            
             button.disabled = False
             await self.msg.edit(view=self)
-            a = await itx.original_response()
-            await a.delete()
+            
+            try:
+                a = await itx.original_response()
+                await a.delete()
+            except:
+                pass
 
         else:
             await itx.response.send_message("No thresholds have been set.", ephemeral = True)
@@ -193,9 +211,15 @@ class WarnView(discord.ui.View):
             view = RemoveAutocomplete(self.author,self.bot.pool,self.msg,options,self.field_1)
             
             await itx.response.send_message("Press **Submit** to submit.",view=view)
+            button.disabled = True
+            await self.msg.edit(view = self)
             await view.wait()
-            a = await itx.original_response()
-            await a.delete()
+
+            try:
+                a = await itx.original_response()
+                await a.delete()
+            except:
+                pass
         else:
             await itx.response.send_message("No autocomplete responses have been set.",ephemeral=True)
 
@@ -292,6 +316,7 @@ class RemoveThreshold(discord.ui.View):
 
     async def interaction_check(self, itx: discord.Interaction, /) -> bool:
         if itx.user==self.author:
+            self.msg = itx.message
             return True
         await itx.response.send_message("You are not authorized for this interaction.",ephemeral=True)
         return False
@@ -303,7 +328,7 @@ class RemoveThreshold(discord.ui.View):
     @discord.ui.button(label='Submit',row=1)
     async def submit(self, itx: discord.Interaction, button: discord.ui.Button):
         if self.modules == []:
-            return await itx.response.send_message("You have not selected any thresholds to remove",ephemeral=True)
+            self.stop()
     
         await self.pool.executemany("DELETE FROM autopunishments WHERE id=$1",[(int(x),) for x in self.modules])
         
@@ -377,6 +402,7 @@ class RemoveAutocomplete(discord.ui.View):
 
     async def interaction_check(self, itx: discord.Interaction, /) -> bool:
         if itx.user==self.author:
+            self.msg = itx.message
             return True
         await itx.response.send_message("You are not authorized for this interaction.",ephemeral=True)
         return False
@@ -388,8 +414,8 @@ class RemoveAutocomplete(discord.ui.View):
     @discord.ui.button(label='Submit',row=1)
     async def submit(self, itx: discord.Interaction, button: discord.ui.Button):
         if self.responses == []:
-            return await itx.response.send_message("You have not selected any autocompletes to remove",ephemeral=True)
-    
+            self.stop()
+            
         await self.pool.executemany("DELETE FROM autocompletes WHERE id=$1",[(int(x),) for x in self.responses])
         
         choose_color = await self.pool.fetchrow("SELECT * FROM autopunishments WHERE guild_id=$1 AND p_type='ban'",itx.guild.id)
