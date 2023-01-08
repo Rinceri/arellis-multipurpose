@@ -184,6 +184,7 @@ class MUtility(commands.Cog, name = "moderator utility", description = "Utility 
         if role == ctx.guild.default_role:
             return await ctx.send("The everyone role cannot be deleted.")
         
+
         try:
             await role.delete(reason = f"Deleted by {str(ctx.author)} (ID: {ctx.author.id})")
         
