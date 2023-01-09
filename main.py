@@ -94,6 +94,17 @@ async def on_member_join(member: discord.Member):
     elif bot_role is not None:
         await member.add_roles(bot_role, reason = "Bot joinrole")
 
+@bot.event
+async def on_guild_channel_create(channel: discord.abc.GuildChannel):
+    vrole_id = await bot.pool.fetchval("SELECT verify_role FROM join_stats WHERE guild_id = $1", channel.guild.id)
+    
+    vrole = channel.guild.get_role(vrole_id) if vrole_id is not None else None
+
+    if vrole is None:
+        return
+    
+    await channel.set_permissions(vrole, read_messages = False, reason = "Verify role cannot view channels")
+
 
 if __name__ == '__main__':
     bot.run(TOKEN)
