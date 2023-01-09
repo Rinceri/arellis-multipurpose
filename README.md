@@ -12,10 +12,9 @@ This bot is still in improvement; [join the server](https://discord.gg/gjRfPR8Rc
 ## Hosting the bot on your own?
 
 ### Requirements:
-- discord.py version 2.1
-- Python 3.8 or higher
-- asyncpg (and consequently postgreSQL)
-- python-dotenv
+Python 3.8 or higher is needed. Check your version with `python --version`
+
+Install dependencies with `python3 -m pip install -U -r requirements.txt`
 
 ### Steps:
 1. Go to [Discord developers](https://discord.com/developers/applications) site, and create a new application
