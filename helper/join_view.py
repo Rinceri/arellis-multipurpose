@@ -1,5 +1,7 @@
 import discord
-from random import randint
+from random import choices
+import string
+from captcha.image import ImageCaptcha
 
 class VerifyMessageView(discord.ui.View):
     def __init__(self, pool):
@@ -26,26 +28,60 @@ class VerifyMessageView(discord.ui.View):
         vrole = itx.guild.get_role(role_ids['verify_role'])
         jrole = itx.guild.get_role(role_ids['join_role_u']) if role_ids['join_role_u'] is not None else None
 
-        num = randint(1000, 9999)
-        await itx.response.send_modal(VerifyCodeModal(vrole, jrole, str(num)))
+        code = ''.join(choices(string.ascii_uppercase + string.digits, k = 5))
+        image = ImageCaptcha()
 
-class VerifyCodeModal(discord.ui.Modal):
-    def __init__(self, vrole: discord.Role, jrole: discord.Role | None, num: str) -> None:
+        image_bytes = image.generate(code)
+
+        view = VerifyModalView(vrole = vrole, jrole = jrole, code = code)
+        await itx.response.send_message("**Enter the code given in the image below**", 
+        file = discord.File(image_bytes, "v_code.png"), ephemeral = True, view = view)
+
+        view.msg = await itx.original_response()
+
+class VerifyModalView(discord.ui.View):
+    def __init__(self, *, vrole, jrole, code):
+        super().__init__(timeout = 80)
         self.vrole = vrole
         self.jrole = jrole
-        self.num = num
-        super().__init__(title = f"Enter code: {self.num}", timeout = 60, custom_id = 'verify_modal')
+        self.code = code
+    
+    async def on_timeout(self) -> None:
+        for child in self.children:
+            child.disabled = True
+        try:
+            await self.msg.edit(view = self)
+        except:
+            pass
+    
+    @discord.ui.button(label = "Enter code", style = discord.ButtonStyle.green)
+    async def verify_modal_callback(self, itx: discord.Interaction, button: discord.ui.Button):
+        await itx.response.send_modal(VerifyCodeModal(self.vrole, self.jrole, self.code, self.msg))
 
-        self.code_inp = discord.ui.TextInput(label = "Enter here", min_length = len(self.num), max_length = len(self.num))
+class VerifyCodeModal(discord.ui.Modal):
+    def __init__(self, vrole: discord.Role, jrole: discord.Role | None, code: str, msg) -> None:
+        self.vrole = vrole
+        self.jrole = jrole
+        self.code = code
+        self.msg = msg
+        super().__init__(title = f"Enter code given in image", timeout = 60, custom_id = 'verify_modal')
+
+        self.code_inp = discord.ui.TextInput(label = "Enter here", min_length = len(self.code), max_length = len(self.code))
         self.add_item(self.code_inp)
 
     async def on_submit(self, itx: discord.Interaction, /) -> None:
-        if self.code_inp.value != self.num:
-            return await itx.response.send_message("Wrong code entered. Verification failed.", ephemeral = True)
+        if self.code_inp.value.upper() != self.code:
+            await itx.response.send_message("Wrong code entered. Verification failed.", ephemeral = True)
+        else:
+            await itx.user.remove_roles(self.vrole, reason = "Verification complete")
         
-        await itx.user.remove_roles(self.vrole, reason = "Verification complete")
-        
-        if self.jrole is not None: 
-            await itx.user.add_roles(self.jrole, reason = "User join role")
+            if self.jrole is not None: 
+                await itx.user.add_roles(self.jrole, reason = "User join role")
 
-        await itx.response.send_message("Verified.", ephemeral = True)
+            await itx.response.send_message("Verified.", ephemeral = True)
+        try:
+            await self.msg.delete()
+        except:
+            pass
+        
+        self.stop()
