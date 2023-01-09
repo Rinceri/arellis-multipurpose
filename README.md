@@ -5,7 +5,7 @@
 
 The bot uses [discord.py](https://github.com/Rapptz/discord.py) library, with [PostgreSQL](https://www.postgresql.org/).
 
-[Invite it!](https://discord.com/api/oauth2/authorize?client_id=1046742411994472448&permissions=8&scope=bot%20applications.commands)
+[Invite it!](https://discord.com/api/oauth2/authorize?client_id=1061852563084947546&permissions=8&scope=bot%20applications.commands)
 
 This bot is still in improvement; [join the server](https://discord.gg/gjRfPR8Rcm) to report bugs or suggest features!
 
