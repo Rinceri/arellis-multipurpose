@@ -5,8 +5,7 @@ from discord import app_commands
 from typing import Optional, Literal
 from datetime import timedelta
 from helper import poll_views
-from helper.other import Paginator
-from helper.other import ColorParser
+from helper.other import Paginator, ColorParser
 import aiohttp
 
 
@@ -17,6 +16,9 @@ class MUtility(commands.Cog, name = "moderator utility", description = "Utility 
         self.bot = bot
 
     async def cog_check(self, ctx: commands.Context) -> bool:
+        if ctx.channel.type == discord.ChannelType.private:
+            return False
+
         b_c = await self.bot.pool.fetchval("SELECT blacklisted_channels FROM guild_table WHERE guild_id = $1", ctx.guild.id)
 
         if b_c is not None and ctx.channel.id in b_c:

@@ -6,6 +6,11 @@ from asyncpg import Connection
 class Owner(commands.Cog, command_attrs = dict(hidden = True), description = "Commands for bot owner only."):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+    
+    async def cog_check(self, ctx: commands.Context) -> bool:
+        if ctx.channel.type == discord.ChannelType.private:
+            return False
+        return True
 
     @commands.command()
     @commands.is_owner()

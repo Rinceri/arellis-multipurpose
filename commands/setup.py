@@ -13,7 +13,9 @@ class Setup(commands.Cog, name = "setup"):
 
     async def cog_check(self, ctx: commands.Context) -> bool:
         # THIS IS ADMIN ONLY COG. ONLY PREFIX IS PUBLICALLY VIEWABLE
-        
+        if ctx.channel.type == discord.ChannelType.private:
+            return False
+
         if ctx.author.guild_permissions.administrator:
             return True
         elif ctx.command.name == "prefix" and len(ctx.args) == 0:
