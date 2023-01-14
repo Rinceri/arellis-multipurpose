@@ -112,7 +112,12 @@ class Setup(commands.Cog, name = "setup"):
         value = "When the user joins, a role is given, which allows only viewing the verification channel. After verifying, the role is removed, and can\
 optionally add another role (use `/joinrole` for that)")
 
-        view = VerificationView(ctx.author, self.bot.pool)
+        if join_stats['verify_channel'] is None and join_stats['verify_role'] is None:
+            cancel_button_disabled = True
+        else:
+            cancel_button_disabled = False
+
+        view = VerificationView(ctx.author, self.bot.pool, cancel_button_disabled)
         view.msg = await ctx.send(embed = em, view = view)
 
     @commands.cooldown(rate = 1, per = 5, type = BucketType.member)

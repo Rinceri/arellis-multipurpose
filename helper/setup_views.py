@@ -67,10 +67,13 @@ class AdditionalMessageModal(discord.ui.Modal):
 # VERIFICATION SETUP VIEW
 
 class VerificationView(discord.ui.View):
-    def __init__(self, author: discord.Member, pool):
+    def __init__(self, author: discord.Member, pool, cancel_button_disabled: bool):
         super().__init__(timeout = 300)
         self.author = author
         self.pool = pool
+        self.cancel_button_disabled = cancel_button_disabled
+
+        self.remove_verification.disabled = self.cancel_button_disabled
 
     async def on_timeout(self) -> None:
         for child in self.children:
@@ -88,7 +91,7 @@ class VerificationView(discord.ui.View):
         return False
 
     async def on_error(self, itx: discord.Interaction, error: Exception, item, /) -> None:
-        await itx.response.send_message("An error occurred. Make sure I have manage channel and roles permissions.", ephemeral = True)
+        await itx.response.send_message("An error occurred. Make sure I have permissions to manage channels and roles.", ephemeral = True)
 
     @discord.ui.button(label = "Create channel (and role if not found)")
     async def create_channel(self, itx: discord.Interaction, button: discord.ui.Button):
@@ -107,14 +110,16 @@ class VerificationView(discord.ui.View):
             
         for channel in itx.guild.channels:
             if channel.permissions_for(role).read_messages:
-                await channel.edit(overwrites = {role: discord.PermissionOverwrite(read_messages = False)})
+                original_overwrites = channel.overwrites
+                original_overwrites[role] = discord.PermissionOverwrite(read_messages = False)
+                await channel.edit(overwrites = original_overwrites)
 
         overwrites = {itx.guild.default_role: discord.PermissionOverwrite(read_messages = False, send_messages = False),
         role: discord.PermissionOverwrite(read_messages = True, send_messages = False),
         itx.guild.me: discord.PermissionOverwrite(read_messages = True, send_messages = True)}
 
         channel = await itx.guild.create_text_channel(name = "verify-here", reason = "Verification channel", position = 0,
-        topic = "Press 'Verify here' to get a code which is used for verification.", overwrites = overwrites)
+        topic = "Press 'Verify here' to get a captcha which is used for verification.", overwrites = overwrites)
 
         em = discord.Embed(color = EMBED_COLOR, title = "Verify by clicking the button",
         description = "Click the button, then enter the code you see in the new message.")
@@ -126,13 +131,41 @@ class VerificationView(discord.ui.View):
         await self.pool.execute("UPDATE join_stats SET verify_role = $1, verify_channel = $2, verify_message = $3 WHERE guild_id = $4",
         role.id, channel.id, msg.id, itx.guild.id)
 
-        self.msg.embeds[0].description = f"Channel {channel.mention}\nRole used: {role.mention}"
-        button.disabled = True
+        self.msg.embeds[0].description = f"Channel: {channel.mention}\nRole used: {role.mention}"
+        
+        for child in self.children:
+            child.disabled = True
         await self.msg.edit(embed = self.msg.embeds[0], view = self)
 
         await itx.followup.send(f"Created channel {channel.mention}\nRole: {role.mention}")
 
         self.stop()
+
+    @discord.ui.button(label = "Remove verification", style = discord.ButtonStyle.red)
+    async def remove_verification(self, itx: discord.Interaction, button: discord.ui.Button):
+        record = await self.pool.fetchrow("SELECT * FROM join_stats WHERE guild_id = $1", itx.guild_id)
+        
+        await self.pool.execute("UPDATE join_stats SET verify_role = $1, verify_channel = $1, verify_message = $1 where guild_id = $2", None, itx.guild_id)
+
+        try:
+            role = itx.guild.get_role(record['verify_role'])
+            await role.delete(reason = f"verification removed by {itx.user}")
+            r_r = "Role was deleted"
+        except:
+            r_r = "Role could not be deleted"
+
+        try:
+            channel = itx.guild.get_channel(record['verify_channel'])
+            await channel.delete(reason = f"verification removed by {itx.user}")
+            c_r = "Channel was deleted"
+        except:
+            c_r = "Channel could not be deleted"
+        
+        button.disabled = True
+        self.msg.embeds[0].description = f"Channel: None has been set\nRole used: None has been set"
+        await self.msg.edit(embed = self.msg.embeds[0], view = self)
+
+        await itx.response.send_message(f"Verification has been removed:\n{r_r}\n{c_r}")
 
 # WARN SETUP VIEWS
 
