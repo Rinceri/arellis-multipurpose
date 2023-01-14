@@ -535,7 +535,7 @@ class MUtility(commands.Cog, name = "moderator utility", description = "Utility 
         if not ctx.interaction:
             await ctx.message.delete()
         else:
-            await ctx.interaction.response.defer()
+            await ctx.interaction.response.defer(ephemeral = True)
 
         if message is None and ctx.message.reference and isinstance(ctx.message.reference.resolved, discord.Message):
             message = ctx.message.reference.resolved
