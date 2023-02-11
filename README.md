@@ -38,6 +38,7 @@ DB_PASSWORD = db_password
 
 10. Run the `main.py` file
 11. Run the commands `-dbsetup` and then `-register` to setup database.
+12. Run the command `-sync` to sync all slash commands.
 
 And we're done!
 
