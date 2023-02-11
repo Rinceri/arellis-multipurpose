@@ -224,6 +224,13 @@ class MasterSetup(commands.Cog, command_attrs = dict(hidden = True), description
             created_on TIMESTAMP WITH TIME ZONE NOT NULL
         )""")
 
+        # MARKOV TRIGRAM LOGGER
+        await conn.execute("""CREATE TABLE IF NOT EXISTS markov_table (
+            guild_id BIGINT primary key,
+            channel_id BIGINT,
+            trigrams TEXT [] DEFAULT '{}'
+        )""")
+
         await ctx.send("Done!")
 
     @commands.command()
