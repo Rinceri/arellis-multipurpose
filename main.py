@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import asyncpg
 from helper import poll_views, join_view
-from os import getenv
+from os import getenv, listdir
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -16,12 +16,12 @@ class MyBot(commands.Bot):
     async def setup_hook(self) -> None:
         try:
             self.pool = await asyncpg.create_pool(database = DB_NAME, user = DB_USERNAME, password = DB_PASSWORD)
-            await self.load_extension('commands.moderation')
+            for file in listdir('commands'):
+                if not file.endswith('.py'):
+                    continue
+                await self.load_extension(f'commands.{file[:-3]}')
+            
             await self.load_extension('helper.error_handler')
-            await self.load_extension('commands.utility')
-            await self.load_extension('commands.public')
-            await self.load_extension('commands.owner')
-            await self.load_extension('commands.setup')
             await self.load_extension('help_command')
 
             try:
