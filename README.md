@@ -20,12 +20,12 @@ Install dependencies with `python3 -m pip install -U -r requirements.txt`
 1. Go to [Discord developers](https://discord.com/developers/applications) site, and create a new application
 2. Go to **Bot** tab and **Add bot**
 3. Go to the section called "Privileged Gateway Intents" and enable the last two intents (can enable the first one as well but not required)
-4. If you have the bot token copied, paste it in the `main.py` file where `TOKEN = 'TOKEN'`. **DO NOT SHARE THIS TOKEN WITH ANYONE**
+4. Copy the bot token. **DO NOT SHARE THIS TOKEN WITH ANYONE.**
 
 5. Create database in postgreSQL, note the database name, username, and password
 6. Create a env file called `.env` with the following format:
 ```
-TOKEN = your_token_here
+TOKEN = your_bot_token_here
 DB_NAME = database_name
 DB_USERNAME = db_username
 DB_PASSWORD = db_password
