@@ -42,5 +42,8 @@ DB_PASSWORD = db_password
 
 And we're done!
 
+## Note
+* Any optional modules are in the `optional` folder. If you wish to use them, move the files to commands category (and run `sync` on Discord)
+
 ## Credits
 Thanks to zezo3021#6852 — bug tester
