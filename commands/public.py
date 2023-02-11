@@ -238,13 +238,6 @@ class PUtility(commands.Cog, name = "public utility"):
             return False
         return True
 
-    @commands.cooldown(rate = 1, per = 5, type = BucketType.user)
-    @commands.command(hidden = True, description = "bottle is best fr") # this just a hidden command for fun lol
-    async def bottle(self, ctx: commands.Context):
-        lis = ['misterlustre#3885 got five comically long metal spoons down his throat', 'unnamed#1680 likes women', 'i hate nestle',
-        'https://cdn.discordapp.com/attachments/723334075024277532/1047157602620026920/Synthol_man_kiss_meme.mp4']
-        await ctx.send(choice(lis))
-
     @commands.cooldown(rate = 1, per = 5, type = BucketType.member)
     @commands.hybrid_command(description = "Gives the attachemnt link(s) in replied message or message passed in (either through ID or link)")
     async def givelink(self, ctx: commands.Context, message: discord.Message = None):
