@@ -5,7 +5,7 @@
 
 ## THIS PROJECT IS NOT MAINTAINED ANYMORE
 Due to lack of interest from others in this bot, I see no reason to continue working on it. This bot should be functional mostly (as of discord.py v2.1), but I have noticed bugs in certain commands that I have not fixed yet.
-
+---
 The bot uses [discord.py](https://github.com/Rapptz/discord.py) library, with [PostgreSQL](https://www.postgresql.org/).
 
 [Invite it!](https://discord.com/api/oauth2/authorize?client_id=1061852563084947546&permissions=8&scope=bot%20applications.commands)
